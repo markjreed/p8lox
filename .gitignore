@@ -1,3 +1,4 @@
 *.asm
 *.prg
 *.vice-mon-list
+*_def.p8

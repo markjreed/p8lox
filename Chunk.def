@@ -1,0 +1,4 @@
+class Chunk
+uword count
+uword capacity
+uword code

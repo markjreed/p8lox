@@ -30,9 +30,10 @@ VM {
         return get_stackTop(vm) - Value.SIZE
     }
 
-    sub pop() -> uword {
+    sub pop(uword target) -> uword {
         set_stackTop(vm, get_stackTop(vm) - Value.SIZE)
-        return get_stackTop(vm)
+        sys.memcopy(get_stackTop(vm), target, Value.SIZE)
+        return target
     }
 
     sub init() { 
@@ -53,6 +54,11 @@ VM {
         sub READ_CONSTANT() -> uword {
             return ValueArray.read(Chunk.get_constants(get_chunk(vm)), READ_BYTE() as uword)
         }
+        sub BINARY_OP(uword subroutine) {
+            uword oldTop = memory("oldTop", Value.SIZE, 1)
+            pop(oldTop)
+            Value.binOp(subroutine, top(), oldTop, top())
+        }
         repeat {
             if common.DEBUG_TRACE_EXECUTION {
                 txt.chrout(' ')
@@ -72,9 +78,13 @@ VM {
                     uword constant = READ_CONSTANT()
                     push(constant)
                 }
-                OP.NEGATE -> { Value.negate(top()) }
-                OP.RETURN  -> { 
-                    Value.print(pop())
+                OP.ADD      -> { BINARY_OP(&Value.add) }
+                OP.SUBTRACT -> { BINARY_OP(&Value.subtract) }
+                OP.MULTIPLY -> { BINARY_OP(&Value.multiply) }
+                OP.DIVIDE   -> { BINARY_OP(&Value.divide) }
+                OP.NEGATE   -> { Value.negate(top()) }
+                OP.RETURN   -> { 
+                    Value.print(pop(Value.buffer))
                     txt.nl()
                     return INTERPRET.OK
                 }

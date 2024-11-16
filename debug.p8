@@ -26,9 +26,13 @@ debug {
         }
         uword instruction = Chunk.read(chunk, offset)
         when instruction {
-            OP.CONSTANT -> { return constantInstruction("OP_CONSTANT", chunk, offset) }
-            OP.NEGATE -> { return simpleInstruction("OP_NEGATE", offset) }
-            OP.RETURN -> { return simpleInstruction("OP_RETURN", offset) }
+            OP.CONSTANT -> { return constantInstruction("OP_CONSTANT", chunk,  offset) }
+            OP.ADD      -> { return simpleInstruction("OP_ADD",        offset) }
+            OP.SUBTRACT -> { return simpleInstruction("OP_SUBTRACT",   offset) }
+            OP.MULTIPLY -> { return simpleInstruction("OP_MULTIPLY",   offset) }
+            OP.DIVIDE   -> { return simpleInstruction("OP_DIVIDE",     offset) }
+            OP.NEGATE   -> { return simpleInstruction("OP_NEGATE",     offset) }
+            OP.RETURN   -> { return simpleInstruction("OP_RETURN",     offset) }
             else -> { 
                 txt.println_suw("Unknown opcode ", instruction, 0)
                 return offset + 1

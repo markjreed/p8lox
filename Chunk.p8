@@ -26,6 +26,10 @@ Chunk {
         set_count(chunk, get_count(chunk) + 1)
     }
 
+    sub read(uword chunk, uword offset) -> ubyte {
+        return @(get_code(chunk) + offset)
+    }
+
     sub free(uword chunk) {
         memory.FREE_ARRAY(sys.sizeof_ubyte, get_code(chunk), get_capacity(chunk))
         init(chunk)

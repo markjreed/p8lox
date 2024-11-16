@@ -1,9 +1,11 @@
 %import memory
 %import syslib
 %import Chunk_def
+%import ValueArray
 
 OP {
-    const ubyte RETURN = 0
+    const ubyte CONSTANT = 0
+    const ubyte RETURN   = 1
 }
 
 Chunk {
@@ -12,6 +14,7 @@ Chunk {
         set_count(chunk, 0)
         set_capacity(chunk, 0)
         set_code(chunk, 0)
+        ValueArray.init(get_constants(chunk))
     }
 
     sub write(uword chunk, ubyte value) {
@@ -30,8 +33,15 @@ Chunk {
         return @(get_code(chunk) + offset)
     }
 
+    sub addConstant(uword chunk, uword value) -> uword {
+        ValueArray.write(get_constants(chunk), value)
+        return ValueArray.get_count(get_constants(chunk)) - 1
+
+    }
+
     sub free(uword chunk) {
         memory.FREE_ARRAY(sys.sizeof_ubyte, get_code(chunk), get_capacity(chunk))
+        ValueArray.free(get_constants(chunk))
         init(chunk)
     }
 }

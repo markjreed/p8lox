@@ -1,0 +1,6 @@
+class Value {
+    union value {
+        float real
+        uword int
+    }
+}

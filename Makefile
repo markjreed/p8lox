@@ -5,4 +5,4 @@ p8lox.prg: $(ENTRYPOINT) Chunk.p8 Chunk_def.p8 memory.p8 palloc.p8 util.p8
 	mv main.prg $@
 
 %_def.p8: %.def
-	mkp8class $* $< >$@
+	mkp8class $* $<

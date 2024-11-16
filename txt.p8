@@ -1,3 +1,4 @@
+%import string
 %import textio
 %option ignore_unused
 
@@ -67,6 +68,25 @@ txt {
             digits -= 1
         }
         txt.print_uw(value)
+    }
+
+    ; justified printing
+    sub print_lj(ubyte width, uword value) {
+        ubyte length = string.length(value)
+        txt.print(value)
+        while length < width {
+            txt.chrout(' ')
+            length += 1
+        }
+    }
+
+    sub print_rj(ubyte width, uword value) {
+        ubyte length = string.length(value)
+        while length < width {
+            txt.chrout(' ')
+            length += 1
+        }
+        txt.print(value)
     }
 
     ; txt.print_* functions with a newline at the end; these could be implemented with

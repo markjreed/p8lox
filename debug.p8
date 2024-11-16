@@ -3,6 +3,7 @@
 %import txt
 %import ValueArray
 %import Value
+%import VM
 
 debug {
     sub disassembleChunk(uword chunk, uword name) {

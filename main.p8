@@ -1,11 +1,13 @@
 %zeropage basicsafe
 %import Chunk
 %import Value
+%import VM
 %import debug
 %import syslib
 
 main {
     sub start() {
+        VM.init()
         uword chunk = memory("main.start.chunk", Chunk.SIZE, 1)
         txt.lowercase()
         Chunk.init(chunk)
@@ -14,6 +16,7 @@ main {
         Chunk.write(chunk, constant, 123)
         Chunk.write(chunk, OP.RETURN, 123)
         debug.disassembleChunk(chunk, "test chunk")
+        VM.free()
         Chunk.free(chunk)
         sys.exit(0)
     }

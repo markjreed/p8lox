@@ -1,6 +1,7 @@
 class Value {
+    ubyte type
     union value {
         float real
-        uword int
+        word int
     }
 }

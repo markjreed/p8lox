@@ -5,7 +5,8 @@
 
 OP {
     const ubyte CONSTANT = 0
-    const ubyte RETURN   = 1
+    const ubyte NEGATE   = 1
+    const ubyte RETURN   = 2
 }
 
 Chunk {

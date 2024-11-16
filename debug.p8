@@ -27,6 +27,7 @@ debug {
         uword instruction = Chunk.read(chunk, offset)
         when instruction {
             OP.CONSTANT -> { return constantInstruction("OP_CONSTANT", chunk, offset) }
+            OP.NEGATE -> { return simpleInstruction("OP_NEGATE", offset) }
             OP.RETURN -> { return simpleInstruction("OP_RETURN", offset) }
             else -> { 
                 txt.println_suw("Unknown opcode ", instruction, 0)

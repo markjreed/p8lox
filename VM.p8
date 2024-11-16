@@ -26,6 +26,10 @@ VM {
         set_stackTop(vm, get_stackTop(vm) + Value.SIZE)
     }
 
+    sub top() -> uword {
+        return get_stackTop(vm) - Value.SIZE
+    }
+
     sub pop() -> uword {
         set_stackTop(vm, get_stackTop(vm) - Value.SIZE)
         return get_stackTop(vm)
@@ -37,7 +41,7 @@ VM {
     sub free() { }
     sub interpret(uword chunk) -> ubyte {
         set_chunk(vm, chunk)
-        set_ip(chunk, Chunk.get_code(chunk))
+        set_ip(vm, Chunk.get_code(chunk))
         return run()
     }
 
@@ -68,6 +72,7 @@ VM {
                     uword constant = READ_CONSTANT()
                     push(constant)
                 }
+                OP.NEGATE -> { Value.negate(top()) }
                 OP.RETURN  -> { 
                     Value.print(pop())
                     txt.nl()

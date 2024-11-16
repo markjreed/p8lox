@@ -46,7 +46,6 @@ Chunk {
     sub addConstant(uword chunk, uword value) -> uword {
         ValueArray.write(get_constants(chunk), value)
         return ValueArray.get_count(get_constants(chunk)) - 1
-
     }
 
     sub free(uword chunk) {

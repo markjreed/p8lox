@@ -1,4 +1,7 @@
-class Chunk
-uword count
-uword capacity
-uword code
+%import ValueArray
+class Chunk {
+    uword count
+    uword capacity
+    uword code
+    ValueArray constants
+}

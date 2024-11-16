@@ -14,23 +14,33 @@ Chunk {
         set_count(chunk, 0)
         set_capacity(chunk, 0)
         set_code(chunk, 0)
+        set_lines(chunk, 0)
         ValueArray.init(get_constants(chunk))
     }
 
-    sub write(uword chunk, ubyte value) {
+    sub write(uword chunk, ubyte value, uword line) {
         uword oldCapacity = get_capacity(chunk)
         if oldCapacity < get_count(chunk) + 1 {
-            set_capacity(chunk, memory.GROW_CAPACITY(oldCapacity))
+            uword newCapacity = memory.GROW_CAPACITY(oldCapacity)
+            set_capacity(chunk, newCapacity)
             set_code(chunk, 
                 memory.GROW_ARRAY(sys.sizeof_ubyte, get_code(chunk), 
-                                  oldCapacity, get_capacity(chunk)))
+                                  oldCapacity, newCapacity))
+            set_lines(chunk, 
+                memory.GROW_ARRAY(sys.sizeof_uword, get_lines(chunk), 
+                                  oldCapacity, newCapacity))
         }
         @(get_code(chunk) + get_count(chunk)) = value
+        pokew(get_lines(chunk) + get_count(chunk) * sys.sizeof_uword, line)
         set_count(chunk, get_count(chunk) + 1)
     }
 
     sub read(uword chunk, uword offset) -> ubyte {
         return @(get_code(chunk) + offset)
+    }
+
+    sub readLine(uword chunk, uword offset) -> uword {
+        return peekw(get_lines(chunk) + offset * sys.sizeof_uword)
     }
 
     sub addConstant(uword chunk, uword value) -> uword {
@@ -41,6 +51,7 @@ Chunk {
 
     sub free(uword chunk) {
         memory.FREE_ARRAY(sys.sizeof_ubyte, get_code(chunk), get_capacity(chunk))
+        memory.FREE_ARRAY(sys.sizeof_uword, get_lines(chunk), get_capacity(chunk))
         ValueArray.free(get_constants(chunk))
         init(chunk)
     }

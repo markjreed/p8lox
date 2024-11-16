@@ -10,8 +10,9 @@ main {
         txt.lowercase()
         Chunk.init(chunk)
         ubyte constant = Chunk.addConstant(chunk, Value.real(1.2)) as ubyte
-        Chunk.write(chunk, OP.CONSTANT)
-        Chunk.write(chunk, constant)
+        Chunk.write(chunk, OP.CONSTANT, 123)
+        Chunk.write(chunk, constant, 123)
+        Chunk.write(chunk, OP.RETURN, 123)
         debug.disassembleChunk(chunk, "test chunk")
         Chunk.free(chunk)
         sys.exit(0)

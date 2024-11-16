@@ -16,6 +16,13 @@ debug {
     sub disassembleInstruction(uword chunk, uword offset) -> uword {
         txt.print_uwzp(4, offset)
         txt.chrout(' ')
+        uword lineNo = Chunk.readLine(chunk, offset)
+        if offset > 0 and lineNo == Chunk.readLine(chunk, offset - 1) {
+            txt.print("  |  ")
+        } else {
+            txt.print_rj(4, conv.str_uw(lineNo))
+            txt.chrout(' ')
+        }
         uword instruction = Chunk.read(chunk, offset)
         when instruction {
             OP.CONSTANT -> { return constantInstruction("OP_CONSTANT", chunk, offset) }

@@ -64,7 +64,7 @@ repl {
                     quoting = true
                 }
             } else if not quoting {
-                if ch == '(' or ch == '[' {
+                if ch == '(' or ch == '[' or ch == iso:'{' {
                     nested[nestingLevel] = ch
                     nestingLevel += 1
                 } else if ch == ')' {
@@ -76,6 +76,12 @@ repl {
                 } else if ch == ']' {
                     if nestingLevel == 0 or nested[nestingLevel - 1] != '[' {
                        error("mismatched ']'")
+                       return true
+                    }
+                    nestingLevel -= 1
+                } else if ch == iso:'}' {
+                    if nestingLevel == 0 or nested[nestingLevel - 1] != iso:'{' {
+                       error(iso:"mismatched '}'")
                        return true
                     }
                     nestingLevel -= 1

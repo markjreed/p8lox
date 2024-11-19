@@ -52,7 +52,11 @@ Value {
     }
 
     sub print(uword value) {
-        floats.print(get_real(value))
+        when get_type(value) {
+            Value.type.REAL   -> floats.print(get_real(value))
+            Value.type.INT    -> txt.print_w(get_int(value))
+            Value.type.STRING -> String.print(get_string(value))
+        }
     }
 
     sub negate(uword value) -> bool {

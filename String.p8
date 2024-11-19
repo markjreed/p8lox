@@ -32,6 +32,10 @@ String {
     sub appendCstring(uword theString, uword cstring) {
         append(theString, cstring, string.length(theString))
     }
+
+    sub print(uword theString) {
+        txt.print_n(get_text(theString), get_length(theString))
+    }
          
     sub free(uword theString) {
         memory.FREE_ARRAY(sys.sizeof_ubyte, get_text(theString), get_capacity(theString))

@@ -1,6 +1,7 @@
 %import memory
 %import string
 %import String_def
+%import txt
 
 String {
     %option merge
@@ -22,6 +23,7 @@ String {
                 memory.GROW_ARRAY(sys.sizeof_ubyte, get_text(theString), 
                                   oldCapacity, newCapacity))
         set_capacity(theString, newCapacity)
+        set_length(theString, newLength)
         sys.memcopy(source, get_text(theString) + oldLength, count)
     }
 
@@ -30,7 +32,10 @@ String {
     }
 
     sub appendCstring(uword theString, uword cstring) {
-        append(theString, cstring, string.length(theString))
+        txt.println("hello!")
+        ubyte length = string.length(cstring)
+        txt.println_sub("length is ", length, 0)
+        append(theString, cstring, length as uword)
     }
 
     sub print(uword theString) {

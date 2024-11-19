@@ -37,7 +37,6 @@ String {
 
     sub appendCstring(uword theString, uword cstring) {
         ubyte length = string.length(cstring)
-        txt.println_sub("length is ", length, 0)
         append(theString, cstring, length as uword)
     }
 
@@ -71,7 +70,12 @@ String {
         uword length1 = get_length(theString)
         uword length2 = string.length(cstring) as uword
         if length1 != length2 {
-            return if length1 < length2 -1 else 1
+            if length1 < length2 {
+                return -1
+            } else  {
+                return 1
+            }
+            ; return if length1 < length2 -1 else 1
         }
         return compare(theString, cstring, length1)
     }

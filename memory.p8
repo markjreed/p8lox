@@ -35,9 +35,12 @@ memory {
             return oldPointer
         }
 
-        uword newPointer = palloc.alloc(newSize)
-        if newPointer == 0 and newSize > 0 {
-            util.panic("out of memory")
+        uword newPointer = 0
+        if newSize > 0 {
+            newPointer = palloc.alloc(newSize)
+            if newPointer == 0 {
+                util.panic("out of memory")
+            }
         }
 
         if oldPointer != 0 {

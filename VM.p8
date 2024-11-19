@@ -54,10 +54,10 @@ VM {
         sub READ_CONSTANT() -> uword {
             return ValueArray.read(Chunk.get_constants(get_chunk(vm)), READ_BYTE() as uword)
         }
-        sub BINARY_OP(uword subroutine) {
+        sub BINARY_OP(uword subroutine) -> bool {
             uword oldTop = memory("oldTop", Value.SIZE, 1)
-            pop(oldTop)
-            Value.binOp(subroutine, top(), oldTop, top())
+            void pop(oldTop)
+            return Value.binOp(subroutine, top(), oldTop, top())
         }
         repeat {
             if common.DEBUG_TRACE_EXECUTION {
@@ -78,11 +78,11 @@ VM {
                     uword constant = READ_CONSTANT()
                     push(constant)
                 }
-                OP.ADD      -> { BINARY_OP(&Value.add) }
-                OP.SUBTRACT -> { BINARY_OP(&Value.subtract) }
-                OP.MULTIPLY -> { BINARY_OP(&Value.multiply) }
-                OP.DIVIDE   -> { BINARY_OP(&Value.divide) }
-                OP.NEGATE   -> { Value.negate(top()) }
+                OP.ADD      -> { if not BINARY_OP(&Value.add) { return INTERPRET.RUNTIME_ERROR } }
+                OP.SUBTRACT -> { if not BINARY_OP(&Value.subtract) { return INTERPRET.RUNTIME_ERROR } }
+                OP.MULTIPLY -> { if not BINARY_OP(&Value.multiply) { return INTERPRET.RUNTIME_ERROR } }
+                OP.DIVIDE   -> { if not BINARY_OP(&Value.divide) { return INTERPRET.RUNTIME_ERROR } }
+                OP.NEGATE   -> { if not Value.negate(top()) { return INTERPRET.RUNTIME_ERROR } }
                 OP.RETURN   -> { 
                     Value.print(pop(Value.buffer))
                     txt.nl()

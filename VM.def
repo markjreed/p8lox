@@ -2,4 +2,5 @@ class VM {
     uword chunk
     uword ip
     uword stackTop
+    uword errMsg
 }

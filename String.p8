@@ -11,6 +11,10 @@ String {
         set_text(theString, 0)
     }
 
+    sub appendChar(uword theString, ubyte char) {
+        append(theString, &char, 1)
+    }
+
     sub append(uword theString, uword source, uword count) {
         uword oldLength = get_length(theString)
         uword newLength = oldLength + count
@@ -35,6 +39,41 @@ String {
         ubyte length = string.length(cstring)
         txt.println_sub("length is ", length, 0)
         append(theString, cstring, length as uword)
+    }
+
+    sub charAt(uword theString, uword index) -> ubyte {
+        return @(get_text(theString) + index)
+    }
+
+    sub compare(uword theString, uword ptr2, uword count) -> byte {
+        byte result = 0
+        uword ptr1 = get_text(theString)
+        uword i
+        for i in 0 to count - 1 {
+            result = (@(ptr1 + i) - @(ptr2 + i)) as byte
+            if result != 0 {
+                return result as byte
+            }
+        }
+        return 0
+    }
+
+    sub compareString(uword theString, uword otherString) -> byte {
+        uword length1 = get_length(theString)
+        uword length2 = get_length(otherString)
+        if length1 != length2 {
+            return if length1 < length2 -1 else (1 as byte)
+        }
+        return compare(theString, get_text(otherString), length1)
+    }
+
+    sub compareCstring(uword theString, uword cstring) -> byte {
+        uword length1 = get_length(theString)
+        uword length2 = string.length(cstring) as uword
+        if length1 != length2 {
+            return if length1 < length2 (-1 as byte) else (1 as byte)
+        }
+        return compare(theString, cstring, length1)
     }
 
     sub print(uword theString) {

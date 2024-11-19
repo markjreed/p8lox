@@ -52,7 +52,7 @@ String {
         for i in 0 to count - 1 {
             result = (@(ptr1 + i) - @(ptr2 + i)) as byte
             if result != 0 {
-                return result as byte
+                return result
             }
         }
         return 0
@@ -62,7 +62,7 @@ String {
         uword length1 = get_length(theString)
         uword length2 = get_length(otherString)
         if length1 != length2 {
-            return if length1 < length2 -1 else (1 as byte)
+            return if length1 < length2 -1 else 1
         }
         return compare(theString, get_text(otherString), length1)
     }
@@ -71,7 +71,7 @@ String {
         uword length1 = get_length(theString)
         uword length2 = string.length(cstring) as uword
         if length1 != length2 {
-            return if length1 < length2 (-1 as byte) else (1 as byte)
+            return if length1 < length2 -1 else 1
         }
         return compare(theString, cstring, length1)
     }

@@ -28,7 +28,16 @@ Value {
         set_int(value, int)
     }
 
-    sub initString(uword value, uword cstring)  {
+    sub initString(uword value, uword theString)  {
+        set_type(value, Value.type.STRING)
+        uword text = String.get_text(theString)
+        uword length = String.get_length(theString)
+        String.empty(get_string(value))
+        String.append(get_string(value), text, length)
+    }
+
+
+    sub initCstring(uword value, uword cstring)  {
         set_type(value, Value.type.STRING)
         String.empty(get_string(value))
         String.appendCstring(get_string(value), cstring)
@@ -47,7 +56,7 @@ Value {
     }
 
     sub makeString(uword cstring) -> uword {
-        initString(buffer, cstring)
+        initCstring(buffer, cstring)
         return buffer
     }
 
@@ -92,9 +101,9 @@ Value {
 
         ubyte type1    = get_type(source1)
         ubyte type2    = get_type(source2)
-        ubyte newtype
+    
         if type1 == type2 {
-            newtype = type1
+            ; do nothing
         } else if type1 == Value.type.REAL and type2 == Value.type.INT {
             set_type(source2, Value.type.REAL)
             set_real(source2, get_int(source2) as float)
@@ -115,7 +124,13 @@ Value {
             Value.type.INT -> { initInt(opDest, get_int(opSource1) + get_int(opSource2)) }
             Value.type.STRING -> { 
                  initString(opDest, get_string(opSource1))
-                 String.appendString(opDest, get_string(opSource2))
+                 txt.print("after initString, opDest='")
+                 String.print(get_string(opDest))
+                 txt.println("'")
+                 txt.print("about to append '")
+                 String.print(get_string(opSource2))
+                 txt.println("'")
+                 String.appendString(get_string(opDest), get_string(opSource2))
             }
         }
     }

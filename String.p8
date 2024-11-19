@@ -32,7 +32,6 @@ String {
     }
 
     sub appendCstring(uword theString, uword cstring) {
-        txt.println("hello!")
         ubyte length = string.length(cstring)
         txt.println_sub("length is ", length, 0)
         append(theString, cstring, length as uword)

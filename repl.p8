@@ -99,15 +99,17 @@ repl {
 main {
     sub start() {
         uword expr
+        repl.init()
         repeat {
             expr = repl.getExpression()
             if expr[0] != '\n' {
                 String.print(expr)
-                if String.compare(expr, "exit\n", 5) == 0 {
+                if String.compareCstring(expr, "exit\n") == 0 {
                     break
                 }
                 ; void VM.interpret(expr)
             }
         }
+        repl.free()
     }
 }

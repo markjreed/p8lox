@@ -9,5 +9,5 @@ p8lox.prg: $(ENTRYPOINT) $(FILES)
 	prog8c -target cx16 "$<"
 	mv repl.prg $@
 
-%_def.p8: %.def
+%_def.p8: %.def ~/bin/mkp8class
 	mkp8class $* $<

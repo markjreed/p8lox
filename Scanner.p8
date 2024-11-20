@@ -115,14 +115,14 @@ Scanner {
         repeat {
             ubyte c = peekCurrent()
             when c {
-                ' ',9 -> advance()
+                ' ',9 -> void advance()
                 '\n' -> { 
                     set_line(scanner, get_line(scanner) + 1)
-                    advance()
+                    void advance()
                 }
                 '/' -> {
                     if peekNext() == '/' {
-                        while peekCurrent() != '\n' and not isAtEnd() { advance() }
+                        while peekCurrent() != '\n' and not isAtEnd() { void advance() }
                     } else {
                         return
                     }
@@ -176,17 +176,17 @@ Scanner {
     }
 
     sub makeIdentifier(uword token) {
-        while isAlpha(peekCurrent()) or isDigit(peekCurrent()) advance()
+        while isAlpha(peekCurrent()) or isDigit(peekCurrent()) void advance()
         makeToken(token, identifierType())
     }
 
     sub makeNumber(uword token) {
-        while isDigit(peekCurrent()) advance()
+        while isDigit(peekCurrent()) void advance()
 
         if peekCurrent() == '.' and isDigit(peekNext()) {
-            advance()
+            void advance()
             while isDigit(peekCurrent())
-                advance()
+                void advance()
         }
         makeToken(token, Token.NUMBER)
     }
@@ -194,13 +194,13 @@ Scanner {
     sub makeString(uword token) {
         while peekCurrent() != '"' and not isAtEnd() {
             if peekCurrent() == '\n' { set_line(scanner, get_line(scanner) + 1) }
-            advance()
+            void advance()
         }
         if isAtEnd() {
             errorToken(token, "Unterminated string.")
             return
         }
-        advance()
+        void advance()
         makeToken(token, Token.STRING)
     }
 

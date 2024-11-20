@@ -37,6 +37,8 @@ VM {
     }
     sub free() { }
     sub interpret(uword source) -> ubyte {
+        uword chunk = memory("chunk", Chunk.SIZE, 1)
+        Chunk.init(chunk)
         compiler.compile(source)
         return INTERPRET.OK
     }

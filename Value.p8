@@ -7,13 +7,6 @@
 Value {
     %option merge
 
-    sub type(uword value) -> ubyte {
-        return get_type(value)
-        const ubyte REAL   = 0
-        const ubyte INT    = 1
-        const ubyte STRING = 2
-    }
-
     sub copy(uword source, uword dest) {
         sys.memcopy(source, dest, SIZE)
     }

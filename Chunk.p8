@@ -1,17 +1,8 @@
 %import memory
 %import syslib
 %import Chunk_def
+%import OP_def
 %import ValueArray
-
-OP {
-    const ubyte CONSTANT = 0
-    const ubyte ADD      = 1
-    const ubyte SUBTRACT = 2
-    const ubyte MULTIPLY = 3
-    const ubyte DIVIDE   = 4
-    const ubyte NEGATE   = 5
-    const ubyte RETURN   = 6
-}
 
 Chunk {
     %option merge

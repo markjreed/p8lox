@@ -1,0 +1,5 @@
+class Scanner {
+    uword start
+    uword current
+    uword line
+}

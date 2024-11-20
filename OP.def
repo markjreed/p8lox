@@ -1,0 +1,5 @@
+class OP {
+    enum {
+        CONSTANT, ADD, SUBTRACT, MULTIPLY, DIVIDE, NEGATE, RETURN
+    }
+}

@@ -113,7 +113,7 @@ main {
                 if String.compareCstring(expr, "exit\n") == 0 {
                     break
                 }
-                ; void VM.interpret(expr)
+                void VM.interpret(expr)
             }
         }
         repl.free()

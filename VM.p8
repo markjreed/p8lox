@@ -1,15 +1,11 @@
 %import Chunk
+%import INTERPRET_def
 %import VM_def
 %import Value
 %import common
+%import compiler
 %import debug
 %import txt
-
-INTERPRET {
-    const ubyte OK = 0
-    const ubyte COMPILE_ERROR = 1
-    const ubyte RUNTIME_ERROR = 2
-}
 
 VM {
     %option merge
@@ -40,10 +36,9 @@ VM {
         resetStack()
     }
     sub free() { }
-    sub interpret(uword chunk) -> ubyte {
-        set_chunk(vm, chunk)
-        set_ip(vm, Chunk.get_code(chunk))
-        return run()
+    sub interpret(uword source) -> ubyte {
+        compiler.compile(source)
+        return INTERPRET.OK
     }
 
     sub run() -> ubyte {

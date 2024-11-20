@@ -39,8 +39,15 @@ VM {
     sub interpret(uword source) -> ubyte {
         uword chunk = memory("chunk", Chunk.SIZE, 1)
         Chunk.init(chunk)
-        compiler.compile(source)
-        return INTERPRET.OK
+        if not compiler.compile(source, chunk) {
+            Chunk.free(chunk)
+            return INTERPRET.COMPILE_ERROR
+        }
+        set_chunk(vm, chunk)
+        set_ip(vm, Chunk.get_code(chunk))
+        ubyte result = run()
+        Chunk.free(chunk)
+        return result
     }
 
     sub run() -> ubyte {

@@ -1,0 +1,7 @@
+%import Token
+class Parser {
+    Token current
+    Token previous
+    bool hadError
+    bool panicMode
+}

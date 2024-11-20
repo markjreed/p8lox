@@ -18,7 +18,7 @@ VM {
     }
 
     sub push(uword value) {
-        sys.memcopy(value, get_stackTop(vm), Value.SIZE)
+        Value.copy(value, get_stackTop(vm))
         set_stackTop(vm, get_stackTop(vm) + Value.SIZE)
     }
 
@@ -28,7 +28,7 @@ VM {
 
     sub pop(uword target) -> uword {
         set_stackTop(vm, get_stackTop(vm) - Value.SIZE)
-        sys.memcopy(get_stackTop(vm), target, Value.SIZE)
+        Value.copy(get_stackTop(vm), target)
         return target
     }
 

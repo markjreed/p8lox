@@ -7,10 +7,6 @@
 Value {
     %option merge
 
-    sub copy(uword source, uword dest) {
-        sys.memcopy(source, dest, SIZE)
-    }
-     
     sub initReal(uword value, float real)  {
         set_type(value, Value.type.REAL)
         set_real(value, real)

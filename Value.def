@@ -1,8 +1,9 @@
 %import String
 class Value {
     ubyte type
-    enum type { REAL, INT, STRING }
+    enum type { REAL, INT, STRING, BOOLEAN }
     union value {
+        bool boolean
         float real
         word int
         String string

@@ -6,6 +6,7 @@
 %import Token
 %import Value
 %import conv
+%import range
 %import txt
 
 ; local variables for recursive parse calls
@@ -93,7 +94,7 @@ compiler {
 
     sub makeConstant(uword value) -> ubyte {
         uword constant = Chunk.addConstant(currentChunk(), value)
-        if constant > 255 {
+        if constant > range.UByte.MAX {
             error("Too many constants in one chunk.")
             return 0
         }

@@ -1,4 +1,5 @@
 %import Chunk
+%import ParseRule
 %import Parser
 %import Precedence
 %import Scanner
@@ -6,6 +7,24 @@
 %import Value
 %import conv
 %import txt
+
+; local variables for recursive parse calls
+stack {
+    const ubyte DEPTH = 16
+    ubyte[DEPTH] operatorType
+    ubyte pointer
+    sub pushOperatorType(ubyte type) {
+        defer pointer += 1
+        operatorType[pointer] = type
+    }
+    sub topOperatorType() -> ubyte {
+        return operatorType[pointer - 1]
+    }
+    sub popOperatorType() -> ubyte {
+        pointer -= 1
+        return operatorType[pointer]
+    }
+}
 
 compiler {
     uword parser = memory("parser", Parser.SIZE, 1)
@@ -85,6 +104,19 @@ compiler {
         emitReturn()
     }
 
+    sub binary() {
+        stack.pushOperatorType(Token.get_type(Parser.get_previous(parser)))
+        uword rule = ParseRule.getRule(stack.topOperatorType())
+        parsePrecedence(ParseRule.get_precedence(rule) + 1)
+        when stack.popOperatorType() {
+            Token.PLUS  -> emitByte(OP.ADD)
+            Token.MINUS -> emitByte(OP.SUBTRACT)
+            Token.STAR  -> emitByte(OP.MULTIPLY)
+            Token.SLASH -> emitByte(OP.DIVIDE)
+            else -> return
+        }
+    }
+
     sub grouping() {
         expression()
         consume(Token.RIGHT_PAREN, "Expect ')' after expression.")
@@ -114,11 +146,11 @@ compiler {
     }
 
     sub unary() {
-        ubyte operatorType = Token.get_type(Parser.get_previous(parser))
+        stack.pushOperatorType(Token.get_type(Parser.get_previous(parser)))
 
         parsePrecedence(Precedence.UNARY);
 
-        when operatorType {
+        when stack.popOperatorType() {
             Token.MINUS -> emitByte(OP.NEGATE)
             else -> return
         }
@@ -134,6 +166,7 @@ compiler {
     sub compile(uword source, uword chunk) -> bool {
         Scanner.init(source)
         compilingChunk = chunk
+        stack.pointer = 0
         Parser.set_hadError(parser, false)
         Parser.set_panicMode(parser, false)
         advance()

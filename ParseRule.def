@@ -1,0 +1,5 @@
+class ParseRule {
+    uword prefix
+    uword infix
+    ubyte precedence
+}

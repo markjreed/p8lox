@@ -38,8 +38,8 @@ Scanner {
             ')' -> { makeToken(token, Token.RIGHT_PAREN) return }
             '{' -> { makeToken(token, Token.LEFT_BRACE) return }
             '}' -> { makeToken(token, Token.RIGHT_BRACE) return }
-            '[' -> { makeToken(token, Token.LEFT_BRACKET) return }
-            ']' -> { makeToken(token, Token.RIGHT_BRACKET) return }
+            '[' -> { makeToken(token, Token.LEFT_BRACE) return }
+            ']' -> { makeToken(token, Token.RIGHT_BRACE) return }
             ';' -> { makeToken(token, Token.SEMICOLON) return }
             ',' -> { makeToken(token, Token.COMMA) return }
             '.' -> { makeToken(token, Token.DOT) return }

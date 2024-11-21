@@ -26,12 +26,9 @@ ParseRule {
         NONE
     ]
 
-    uword buffer = memory("ParseRule.buffer", SIZE, 1)
-
-    sub getRule(ubyte type) -> uword {
-        set_prefix(buffer, prefix[type])
-        set_infix(buffer, infix[type])
-        set_precedence(buffer, precedence[type])
-        return buffer
+    sub getRule(uword rule, ubyte type) {
+        set_prefix(rule, prefix[type])
+        set_infix(rule, infix[type])
+        set_precedence(rule, precedence[type])
     }
 }

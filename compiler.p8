@@ -11,18 +11,22 @@
 ; local variables for recursive parse calls
 stack {
     const ubyte DEPTH = 16
-    ubyte[DEPTH] operatorType
+    ubyte[DEPTH] values
+
     ubyte pointer
-    sub pushOperatorType(ubyte type) {
-        defer pointer += 1
-        operatorType[pointer] = type
+
+    sub push(ubyte value) {
+        values[pointer] = value
+        pointer += 1
     }
-    sub topOperatorType() -> ubyte {
-        return operatorType[pointer - 1]
+
+    sub top() -> ubyte {
+        return values[pointer - 1]
     }
-    sub popOperatorType() -> ubyte {
+
+    sub pop() -> ubyte {
         pointer -= 1
-        return operatorType[pointer]
+        return values[pointer]
     }
 }
 
@@ -105,10 +109,11 @@ compiler {
     }
 
     sub binary() {
-        stack.pushOperatorType(Token.get_type(Parser.get_previous(parser)))
-        uword rule = ParseRule.getRule(stack.topOperatorType())
+        stack.push(Token.get_type(Parser.get_previous(parser)))
+        uword rule = memory("binary.rule", ParseRule.SIZE, 1)
+        ParseRule.getRule(rule, stack.top())
         parsePrecedence(ParseRule.get_precedence(rule) + 1)
-        when stack.popOperatorType() {
+        when stack.pop() {
             Token.PLUS  -> emitByte(OP.ADD)
             Token.MINUS -> emitByte(OP.SUBTRACT)
             Token.STAR  -> emitByte(OP.MULTIPLY)
@@ -146,17 +151,43 @@ compiler {
     }
 
     sub unary() {
-        stack.pushOperatorType(Token.get_type(Parser.get_previous(parser)))
+        stack.push(Token.get_type(Parser.get_previous(parser)))
 
         parsePrecedence(Precedence.UNARY);
 
-        when stack.popOperatorType() {
+        when stack.pop() {
             Token.MINUS -> emitByte(OP.NEGATE)
             else -> return
         }
     }
 
     sub parsePrecedence(ubyte precedence) {
+        uword rule = memory("parsePrecedence.rule", ParseRule.SIZE, 1)
+
+        ParseRule.getRule(rule, Token.get_type(Parser.get_previous(parser)))
+        uword prefix = ParseRule.get_prefix(rule)
+
+        if prefix == 0 {
+            error("Expect expression")
+            return
+        }
+
+        stack.push(precedence)
+        void call(prefix)
+
+        ParseRule.getRule(rule, Token.get_type(Parser.get_current(parser)))
+
+        while stack.top() <= ParseRule.get_precedence(rule) {
+            advance()
+            ParseRule.getRule(rule, Token.get_type(Parser.get_previous(parser)))
+            uword infix = ParseRule.get_infix(rule)
+            if infix != 0 {
+                call(infix)
+            }
+            ParseRule.getRule(rule, Token.get_type(Parser.get_current(parser)))
+        }
+
+        void stack.pop()
     }
 
     sub expression() {

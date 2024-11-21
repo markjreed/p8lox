@@ -6,6 +6,7 @@
 %import Token
 %import Value
 %import conv
+%import debug
 %import range
 %import txt
 
@@ -107,6 +108,11 @@ compiler {
 
     sub endCompiler() {
         emitReturn()
+        if common.DEBUG_PRINT_CODE {
+            if not Parser.get_hadError(parser) {
+                debug.disassembleChunk(currentChunk(), "code")
+            }
+        }
     }
 
     sub binary() {

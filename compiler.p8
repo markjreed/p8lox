@@ -1,7 +1,9 @@
 %import Chunk
 %import Parser
+%import Precedence
 %import Scanner
 %import Token
+%import Value
 %import conv
 %import txt
 
@@ -66,11 +68,67 @@ compiler {
         emitByte(OP.RETURN)
     }
 
+    sub makeConstant(uword value) -> ubyte {
+        uword constant = Chunk.addConstant(currentChunk(), value)
+        if constant > 255 {
+            error("Too many constants in one chunk.")
+            return 0
+        }
+        return constant as ubyte
+    }
+
+    sub emitConstant(uword value) {
+        emitBytes(OP.CONSTANT, makeConstant(value))
+    }
+
     sub endCompiler() {
         emitReturn()
     }
 
+    sub grouping() {
+        expression()
+        consume(Token.RIGHT_PAREN, "Expect ')' after expression.")
+    }
+
+    sub number() {
+        uword value = memory("numberBuf", Value.SIZE, 1)
+        Value.initInt(value, 0)
+        uword ptr = Token.get_start(Parser.get_previous(parser))
+        bool afterDecimal = false
+        float denom = 1.0
+        uword i
+        for i in 0 to Token.get_length(Parser.get_previous(parser)) - 1 {
+            if ptr[i] == '.' {
+                afterDecimal = true
+                Value.initReal(value, Value.get_real(value) as word)
+            } else {
+                ubyte digitValue = ptr[i] - '0'
+                if afterDecimal {
+                    Value.set_real(value, Value.get_real(value) + digitValue * denom)
+                    denom /= 10.0
+                } else {
+                    Value.set_int(value, Value.get_int(value) * 10 + digitValue)
+                }
+            }
+        }
+    }
+
+    sub unary() {
+        ubyte operatorType = Token.get_type(Parser.get_previous(parser))
+
+        expression();
+
+        when operatorType {
+            Token.MINUS -> emitByte(OP.NEGATE)
+            else -> return
+        }
+    }
+
+    sub parsePrecedence(ubyte precedence) {
+    }
+
     sub expression() {
+        parsePrecedence(Precedence.ASSIGNMENT)
     }
 
     sub compile(uword source, uword chunk) -> bool {

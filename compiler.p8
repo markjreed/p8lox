@@ -116,7 +116,7 @@ compiler {
     sub unary() {
         ubyte operatorType = Token.get_type(Parser.get_previous(parser))
 
-        expression();
+        parsePrecedence(Precedence.UNARY);
 
         when operatorType {
             Token.MINUS -> emitByte(OP.NEGATE)

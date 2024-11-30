@@ -20,14 +20,14 @@ Chunk {
             uword newCapacity = memory.GROW_CAPACITY(oldCapacity)
             set_capacity(chunk, newCapacity)
             set_code(chunk, 
-                memory.GROW_ARRAY(sys.sizeof_ubyte, get_code(chunk), 
+                memory.GROW_ARRAY(sys.SIZEOF_UBYTE, get_code(chunk), 
                                   oldCapacity, newCapacity))
             set_lines(chunk, 
-                memory.GROW_ARRAY(sys.sizeof_uword, get_lines(chunk), 
+                memory.GROW_ARRAY(sys.SIZEOF_UWORD, get_lines(chunk), 
                                   oldCapacity, newCapacity))
         }
         @(get_code(chunk) + get_count(chunk)) = value
-        pokew(get_lines(chunk) + get_count(chunk) * sys.sizeof_uword, line)
+        pokew(get_lines(chunk) + get_count(chunk) * sys.SIZEOF_UWORD, line)
         set_count(chunk, get_count(chunk) + 1)
     }
 
@@ -36,7 +36,7 @@ Chunk {
     }
 
     sub readLine(uword chunk, uword offset) -> uword {
-        return peekw(get_lines(chunk) + offset * sys.sizeof_uword)
+        return peekw(get_lines(chunk) + offset * sys.SIZEOF_UWORD)
     }
 
     sub addConstant(uword chunk, uword value) -> uword {
@@ -45,8 +45,8 @@ Chunk {
     }
 
     sub free(uword chunk) {
-        memory.FREE_ARRAY(sys.sizeof_ubyte, get_code(chunk), get_capacity(chunk))
-        memory.FREE_ARRAY(sys.sizeof_uword, get_lines(chunk), get_capacity(chunk))
+        memory.FREE_ARRAY(sys.SIZEOF_UBYTE, get_code(chunk), get_capacity(chunk))
+        memory.FREE_ARRAY(sys.SIZEOF_UWORD, get_lines(chunk), get_capacity(chunk))
         ValueArray.free(get_constants(chunk))
         init(chunk)
     }

@@ -72,7 +72,7 @@ txt {
 
     ; justified printing
     sub print_lj(ubyte width, uword value) {
-        ubyte length = string.length(value)
+        ubyte length = strings.length(value)
         txt.print(value)
         while length < width {
             txt.chrout(' ')
@@ -81,7 +81,7 @@ txt {
     }
 
     sub print_rj(ubyte width, uword value) {
-        ubyte length = string.length(value)
+        ubyte length = strings.length(value)
         while length < width {
             txt.chrout(' ')
             length += 1

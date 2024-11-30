@@ -107,7 +107,7 @@ Scanner {
     sub errorToken(uword token, uword msg) {
         Token.set_type(token, Token.ERROR)
         Token.set_start(token, msg)
-        Token.set_length(token, string.length(msg))
+        Token.set_length(token, strings.length(msg))
         Token.set_line(token, get_line(scanner))
     }
 

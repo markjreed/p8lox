@@ -1,5 +1,5 @@
 %import memory
-%import string
+%import strings
 %import String_def
 %import txt
 
@@ -24,7 +24,7 @@ String {
             newCapacity = memory.GROW_CAPACITY(newCapacity)
         }
         set_text(theString, 
-                memory.GROW_ARRAY(sys.sizeof_ubyte, get_text(theString), 
+                memory.GROW_ARRAY(sys.SIZEOF_UBYTE, get_text(theString), 
                                   oldCapacity, newCapacity))
         set_capacity(theString, newCapacity)
         set_length(theString, newLength)
@@ -36,7 +36,7 @@ String {
     }
 
     sub appendCstring(uword theString, uword cstring) {
-        ubyte length = string.length(cstring)
+        ubyte length = strings.length(cstring)
         append(theString, cstring, length as uword)
     }
 
@@ -68,7 +68,7 @@ String {
 
     sub compareCstring(uword theString, uword cstring) -> byte {
         uword length1 = get_length(theString)
-        uword length2 = string.length(cstring) as uword
+        uword length2 = strings.length(cstring) as uword
         if length1 != length2 {
             if length1 < length2 {
                 return -1
@@ -85,7 +85,7 @@ String {
     }
          
     sub free(uword theString) {
-        memory.FREE_ARRAY(sys.sizeof_ubyte, get_text(theString), get_capacity(theString))
+        memory.FREE_ARRAY(sys.SIZEOF_UBYTE, get_text(theString), get_capacity(theString))
         empty(theString)
     }
 }

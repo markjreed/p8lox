@@ -6,8 +6,9 @@ ParseRule {
     %option merge
     uword[Token.EOF+1] prefix = [ 
         &compiler.grouping, 0, 0, 0, 0, 0, &compiler.unary, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, &compiler.number, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0
+        0, 0, 0, 0, 0, 0, 0, 0, &compiler.number, 0, 0, 0, &compiler.literal,
+        0, 0, 0, &compiler.literal, 0, 0, 0, 0, 0, &compiler.literal, 0, 0, 0,
+        0
     ]
      
     uword [Token.EOF+1] infix = [

@@ -27,6 +27,9 @@ debug {
         uword instruction = Chunk.read(chunk, offset)
         when instruction {
             OP.CONSTANT -> { return constantInstruction("OP_CONSTANT", chunk,  offset) }
+            OP.NIL      -> { return simpleInstruction("OP_NIL",        offset) }
+            OP.TRUE     -> { return simpleInstruction("OP_TRUE",        offset) }
+            OP.FALSE    -> { return simpleInstruction("OP_FALSE",        offset) }
             OP.ADD      -> { return simpleInstruction("OP_ADD",        offset) }
             OP.SUBTRACT -> { return simpleInstruction("OP_SUBTRACT",   offset) }
             OP.MULTIPLY -> { return simpleInstruction("OP_MULTIPLY",   offset) }

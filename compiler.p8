@@ -72,8 +72,9 @@ compiler {
         }
     }
 
-    sub consume(ubyte type, uword message) {
-        if Token.get_type(Parser.get_current(parser)) == type {
+    sub consume(ubyte expected, uword message) {
+        ubyte actual = Token.get_type(Parser.get_current(parser))
+        if actual == expected {
             advance()
             return
         }
@@ -129,6 +130,15 @@ compiler {
         }
     }
 
+    sub literal() {
+        when Token.get_type(Parser.get_previous(parser)) {
+            Token.FALSE -> emitByte(OP.FALSE)
+            Token.NIL -> emitByte(OP.NIL)
+            Token.TRUE -> emitByte(OP.TRUE)
+            else -> return
+        }
+    }
+
     sub grouping() {
         expression()
         consume(Token.RIGHT_PAREN, "Expect ')' after expression.")
@@ -139,22 +149,32 @@ compiler {
         Value.initInt(value, 0)
         uword ptr = Token.get_start(Parser.get_previous(parser))
         bool afterDecimal = false
-        float denom = 1.0
+        float denom
         uword i
-        for i in 0 to Token.get_length(Parser.get_previous(parser)) - 1 {
+        uword length = Token.get_length(Parser.get_previous(parser)) 
+        for i in 0 to length - 1 {
             if ptr[i] == '.' {
                 afterDecimal = true
-                Value.initReal(value, Value.get_real(value) as word)
+                denom = 0.1
+                float fval = Value.get_int(value) as float
+                txt.nl()
+                Value.initReal(value, fval)
             } else {
                 ubyte digitValue = ptr[i] - '0'
                 if afterDecimal {
                     Value.set_real(value, Value.get_real(value) + digitValue * denom)
                     denom /= 10.0
                 } else {
-                    Value.set_int(value, Value.get_int(value) * 10 + digitValue)
+                    word old = Value.get_int(value)
+                    word new = 10 * old
+                    new += digitValue as word
+                    Value.set_int(value, new)
                 }
             }
         }
+        Value.print(value)
+        txt.nl()
+        emitConstant(value)
     }
 
     sub unary() {
@@ -169,9 +189,12 @@ compiler {
     }
 
     sub parsePrecedence(ubyte precedence) {
+        advance()
         uword rule = memory("parsePrecedence.rule", ParseRule.SIZE, 1)
+        ubyte prevType = Token.get_type(Parser.get_previous(parser))
 
-        ParseRule.getRule(rule, Token.get_type(Parser.get_previous(parser)))
+        ParseRule.getRule(rule, prevType)
+
         uword prefix = ParseRule.get_prefix(rule)
 
         if prefix == 0 {

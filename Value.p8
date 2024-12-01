@@ -7,6 +7,25 @@
 Value {
     %option merge
 
+    uword NIL = memory("Value.NIL", SIZE, 1)
+    bool initialized = false
+
+    sub getNil() -> uword {
+        if not initialized {
+            initNil(NIL)
+        }
+        return NIL
+    }
+
+    sub initNil(uword value)  {
+        set_type(value, Value.type.NIL)
+    }
+
+    sub initBoolean(uword value, bool boolean)  {
+        set_type(value, Value.type.BOOLEAN)
+        set_boolean(value, boolean)
+    }
+
     sub initReal(uword value, float real)  {
         set_type(value, Value.type.REAL)
         set_real(value, real)
@@ -34,6 +53,11 @@ Value {
 
     uword buffer = memory("Value_buffer", SIZE, 1);
 
+    sub makeBoolean(bool flag) -> uword {
+        initBoolean(buffer, flag)
+        return buffer
+    }
+
     sub makeReal(float real) -> uword {
         initReal(buffer, real)
         return buffer
@@ -51,9 +75,17 @@ Value {
 
     sub print(uword value) {
         when get_type(value) {
-            Value.type.REAL   -> floats.print(get_real(value))
-            Value.type.INT    -> txt.print_w(get_int(value))
-            Value.type.STRING -> String.print(get_string(value))
+            Value.type.NIL     -> txt.print("nil")
+            Value.type.REAL    -> txt.print_f(get_real(value))
+            Value.type.INT     -> txt.print_w(get_int(value))
+            Value.type.STRING  -> String.print(get_string(value))
+            Value.type.BOOLEAN -> { 
+                if get_boolean(value) { 
+                    txt.print("true")
+                } else {
+                    txt.print("false")
+                }
+            }
         }
     }
 
@@ -74,7 +106,7 @@ Value {
     }
 
     sub typeError() -> bool {
-        txt.println("ERROR: Type mismatch")
+        VM.runtimeError("ERROR: Type mismatch")
         return false
     }
         

@@ -17,6 +17,14 @@ VM {
         set_stackTop(vm, stack)
     }
 
+    sub runtimeError(uword message) {
+        txt.println(message)
+        uword instruction = VM.get_ip(vm) - Chunk.get_code(VM.get_chunk(vm)) - 1
+        uword line = Chunk.readLine(VM.get_chunk(vm), instruction)
+        txt.println_suw("[line ", line, "] in script")
+        resetStack()
+    }
+
     sub push(uword value) {
         Value.copy(value, get_stackTop(vm))
         set_stackTop(vm, get_stackTop(vm) + Value.SIZE)
@@ -36,6 +44,7 @@ VM {
         resetStack()
     }
     sub free() { }
+
     sub interpret(uword source) -> ubyte {
         uword chunk = memory("chunk", Chunk.SIZE, 1)
         Chunk.init(chunk)
@@ -82,6 +91,9 @@ VM {
                     uword constant = READ_CONSTANT()
                     push(constant)
                 }
+                OP.NIL      -> { push(Value.getNil()) }
+                OP.TRUE     -> { push(Value.makeBoolean(true)) }
+                OP.FALSE    -> { push(Value.makeBoolean(false)) }
                 OP.ADD      -> { if not BINARY_OP(&Value.add) { return INTERPRET.RUNTIME_ERROR } }
                 OP.SUBTRACT -> { if not BINARY_OP(&Value.subtract) { return INTERPRET.RUNTIME_ERROR } }
                 OP.MULTIPLY -> { if not BINARY_OP(&Value.multiply) { return INTERPRET.RUNTIME_ERROR } }

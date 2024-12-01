@@ -149,7 +149,7 @@ Scanner {
             'f' -> {
                 if get_current(scanner) - get_start(scanner) > 1 {
                     when @(get_start(scanner) + 1) {
-                        'a' -> return checkKeyword(2, 3, "lse", Token.ELSE)
+                        'a' -> return checkKeyword(2, 3, "lse", Token.FALSE)
                         'o' -> return checkKeyword(2, 1, "r", Token.FOR)
                         'u' -> return checkKeyword(2, 1, "n", Token.FUN)
                     }
@@ -165,7 +165,7 @@ Scanner {
                 if get_current(scanner) - get_start(scanner) > 1 {
                     when @(get_start(scanner) + 1) {
                         'h' -> return checkKeyword(2, 2, "is", Token.THIS)
-                        'o' -> return checkKeyword(2, 2, "ue", Token.TRUE)
+                        'r' -> return checkKeyword(2, 2, "ue", Token.TRUE)
                     }
                 }
             }

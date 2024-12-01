@@ -105,6 +105,7 @@ repl {
 main {
     sub start() {
         uword expr
+        txt.lowercase()
         repl.init()
         repeat {
             expr = repl.getExpression()

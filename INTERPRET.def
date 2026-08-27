@@ -1,3 +1,0 @@
-class INTERPRET {
-    enum { OK, COMPILE_ERROR, RUNTIME_ERROR }
-}

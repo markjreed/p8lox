@@ -1,5 +1,0 @@
-class String {
-    uword capacity
-    uword length
-    uword text
-}

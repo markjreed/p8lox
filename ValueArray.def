@@ -1,5 +1,0 @@
-class ValueArray {
-    uword count
-    uword capacity
-    uword values
-}

@@ -1,8 +1,0 @@
-%import ValueArray
-class Chunk {
-    uword count
-    uword capacity
-    uword code
-    uword lines
-    ValueArray constants
-}

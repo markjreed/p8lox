@@ -17,9 +17,17 @@ chunks {
             uword old_capacity = chunk.capacity
             chunk.capacity = mem.grow(old_capacity)
             chunk.code = mem.alloc(chunk.code, old_capacity, chunk.capacity)
+            if chunk.code == 0 {
+                sys.exit(1)
+            }
         }
         @(chunk.code + chunk.count) = value
         chunk.count += 1
+    }
+
+    sub free(^^Chunk chunk) {
+        mem.alloc(chunk.code, chunk.capacity, 0)
+        init(chunk)
     }
 
 }

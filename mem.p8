@@ -1,4 +1,5 @@
 %import palloc
+%import textio
 
 mem {
     bool initialized = false
@@ -30,6 +31,10 @@ mem {
             new_ptr = palloc.alloc(new_size)
             sys.memcopy(old_ptr, new_ptr, old_size)
             palloc.free(old_ptr)
+        }
+        if new_ptr == 0 {
+            txt.print("panic: out of memory")
+            sys.exit(1)
         }
         return new_ptr
     }

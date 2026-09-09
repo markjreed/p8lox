@@ -24,11 +24,21 @@ debug {
         txt.print_uw(value)
     }
 
+    sub print_pad(str value, ubyte width) {
+        ubyte actual = strings.length(value)
+        txt.print(value)
+        while actual < width {
+            txt.chrout(' ')
+            actual += 1
+        }
+    }
+
     sub disassemble_instruction(^^Chunk chunk, uword offset) -> uword {
         print_uwpad(offset, 4)
         txt.chrout(' ')
         ubyte instruction = @(chunk.code + offset)
         when instruction {
+            chunks.OpCode::CONSTANT -> return constant_instruction("CONSTANT", chunk, offset)
             chunks.OpCode::RETURN -> return simple_instruction("RETURN", offset)
             else -> { 
                 txt.print("unknown opcode ") txt.print_ub(instruction) txt.nl()
@@ -41,5 +51,14 @@ debug {
         txt.print(label)
         txt.nl()
         return offset + 1
+    }
+
+    sub constant_instruction(str label, ^^Chunk chunk, uword offset) -> uword {
+        ubyte constant = @(chunk.code + offset + 1)
+        print_pad(label, 17)
+        print_uwpad(constant, 4)
+        values.print(chunk.constants.values + constant)
+        txt.nl()
+        return offset + 2
     }
 }

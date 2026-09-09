@@ -9,7 +9,11 @@ main {
         txt.iso()
         ^^Chunk chunk = memory("chunk", sizeof(Chunk), 1)
         chunks.init(chunk)
+        ubyte constant = chunks.addConstant(chunk, 1.2)
+        chunks.write(chunk, chunks.OpCode::CONSTANT)
+        chunks.write(chunk, constant)
         chunks.write(chunk, chunks.OpCode::RETURN)
+
         debug.disassemble_chunk(chunk,"test chunk")
         chunks.free(chunk)
     }

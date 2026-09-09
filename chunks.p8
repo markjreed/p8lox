@@ -7,6 +7,10 @@ chunks {
         ^^ubyte code
     }
 
+    enum OpCode {
+        OP_RETURN
+    }
+
     sub init(^^Chunk chunk) {
         chunk.count = 0
         chunk.capacity = 0

@@ -8,7 +8,7 @@ chunks {
     }
 
     enum OpCode {
-        OP_RETURN
+        RETURN
     }
 
     sub init(^^Chunk chunk) {
@@ -30,7 +30,7 @@ chunks {
     }
 
     sub free(^^Chunk chunk) {
-        mem.alloc(chunk.code, chunk.capacity, 0)
+        void mem.alloc(chunk.code, chunk.capacity, 0)
         init(chunk)
     }
 

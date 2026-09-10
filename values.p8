@@ -6,7 +6,7 @@ values {
         float f_value
     }
 
-    sub make_float(float value) -> ^^Value {
+    sub makeFloat(float value) -> ^^Value {
         ^^Value result = mem.alloc(0, 0, sizeof(Value))
         result.f_value = value
         return result

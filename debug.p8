@@ -7,11 +7,11 @@
 
 debug {
     alias Chunk = chunks.Chunk
-    sub disassemble_chunk(^^Chunk chunk, ^^ubyte name) {
+    sub disassembleChunk(^^Chunk chunk, ^^ubyte name) {
         txt.print("== ") txt.print(name) txt.print(" ==\n")
         uword offset = 0
         while offset < chunk.count {
-            offset = disassemble_instruction(chunk, offset)
+            offset = disassembleInstruction(chunk, offset)
         }
     }
 
@@ -33,13 +33,19 @@ debug {
         }
     }
 
-    sub disassemble_instruction(^^Chunk chunk, uword offset) -> uword {
+    sub disassembleInstruction(^^Chunk chunk, uword offset) -> uword {
         print_uwpad(offset, 4)
+        txt.chrout(' ')
+        if offset > 0 and peekw(chunk.lines+offset) == peekw(chunk.lines+offset - 1) {
+            txt.print(" |  ")
+        } else {
+            print_uwpad(peekw(chunk.lines+offset), 4)
+        }
         txt.chrout(' ')
         ubyte instruction = @(chunk.code + offset)
         when instruction {
-            chunks.OpCode::CONSTANT -> return constant_instruction("CONSTANT", chunk, offset)
-            chunks.OpCode::RETURN -> return simple_instruction("RETURN", offset)
+            chunks.OpCode::CONSTANT -> return constantInstruction("CONSTANT", chunk, offset)
+            chunks.OpCode::RETURN -> return simpleInstruction("RETURN", offset)
             else -> { 
                 txt.print("unknown opcode ") txt.print_ub(instruction) txt.nl()
                 return offset + 1
@@ -47,16 +53,17 @@ debug {
         }
     }
 
-    sub simple_instruction(str label, uword offset) -> uword {
+    sub simpleInstruction(str label, uword offset) -> uword {
         txt.print(label)
         txt.nl()
         return offset + 1
     }
 
-    sub constant_instruction(str label, ^^Chunk chunk, uword offset) -> uword {
+    sub constantInstruction(str label, ^^Chunk chunk, uword offset) -> uword {
         ubyte constant = @(chunk.code + offset + 1)
         print_pad(label, 17)
-        print_uwpad(constant, 4)
+        print_uwpad(constant, 3)
+        txt.chrout(' ')
         values.print(chunk.constants.values + constant)
         txt.nl()
         return offset + 2

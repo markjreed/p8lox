@@ -66,6 +66,11 @@ values {
         array.values = 0
     }
 
+    sub assign(^^Value dest, ^^Value src) -> ^^Value {
+        sys.memcopy(src, dest, sizeof(Value))
+        return dest
+    }
+
     sub writeArray(^^ValueArray array, ^^Value value) {
         if array.capacity < array.count + 1 {
             uword old_capacity = array.capacity
@@ -75,7 +80,7 @@ values {
                                      array.capacity * sizeof(Value))
         }
         ^^Value valptr = array.values + array.count
-        sys.memcopy(value, valptr, sizeof(Value))
+        void assign(valptr, value)
         array.count += 1
     }
 

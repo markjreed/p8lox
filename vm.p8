@@ -8,9 +8,13 @@ vm {
     alias Value = values.Value
     alias ValueArray = values.ValueArray
 
+    const uword STACK_MAX = 256
+
     struct VM {
         ^^Chunk chunk
         uword ip
+        ^^Value stack
+        ^^Value stackTop
     }
 
     ^^VM theVM = memory("theVM", sizeof(VM), 1)
@@ -20,6 +24,12 @@ vm {
     }
 
     sub init() {
+        theVM.stack = memory("stack", STACK_MAX * sizeof(Value), 1)
+        resetStack()
+    }
+
+    sub resetStack() {
+        theVM.stackTop = theVM.stack
     }
 
     sub free() {
@@ -31,11 +41,28 @@ vm {
         return run()
     }
 
+    sub pushValue(^^Value value) {
+        void values.assign(theVM.stackTop, value)
+        theVM.stackTop = (theVM.stackTop as ^^ubyte + sizeof(Value)) as ^^Value
+    }
+
+    sub popValue() -> ^^Value {
+        theVM.stackTop -= 1
+        return theVM.stackTop
+    }
+
     sub run() -> ubyte {
         ubyte instruction
         ^^Value value
         repeat {
             if common.DEBUG_TRACE_EXECUTION {
+                txt.chrout(' ')
+                value = theVM.stack
+                while value < theVM.stackTop {
+                    txt.chrout('[') values.print(value) txt.chrout(']')
+                    value++
+                }
+                txt.nl()
                 void debug.disassembleInstruction(theVM.chunk,
                         (theVM.ip as uword) - (theVM.chunk.code as uword))
             }
@@ -46,18 +73,15 @@ vm {
                chunks.OpCode::CONSTANT -> {
                     value = theVM.chunk.constants.values + @(theVM.ip)
                     theVM.ip += 1
-                    values.print(value)
+                    pushValue(value)
                }
                chunks.OpCode::CONSTANT2 -> {
                     value = theVM.chunk.constants.values + peekw(theVM.ip)
                     theVM.ip += 2
-                    values.print(value)
+                    pushValue(value)
                }
             }
         }
     }
-                
-
-
 
 }

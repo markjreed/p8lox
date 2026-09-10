@@ -2,18 +2,52 @@
 %import mem
 
 values {
-    struct Value {
-        float f_value
+    enum ValueType {
+        NIL, BOOL, NUM, STRING, FUN
     }
 
-    sub makeFloat(float value) -> ^^Value {
-        ^^Value result = mem.alloc(0, 0, sizeof(Value))
-        result.f_value = value
+    struct Value {
+        ubyte type
+        ubyte[5] bytes
+    }
+
+    ^^Value NIL = ^^Value:[ValueType::NIL, [0, 0, 0, 0, 0]]
+
+    sub new() -> ^^Value {
+        return mem.alloc(0, 0, sizeof(Value))
+    }
+
+    sub makeBool(bool value) -> ^^Value {
+        ^^Value result = new()
+        result.type = ValueType::BOOL
+        pokebool(result as ^^ubyte + offsetof(Value.bytes), value)
+        return result
+    }
+
+    sub makeNum(float value) -> ^^Value {
+        ^^Value result = new()
+        result.type = ValueType::NUM
+        pokef(result as ^^ubyte + offsetof(Value.bytes), value)
+        return result
+    }
+
+    sub makeString(str value) -> ^^Value {
+        ^^Value result = new()
+        result.type = ValueType::STRING
+        result.bytes[0] = strings.length(value)
+        pokew(result as ^^ubyte + offsetof(Value.bytes) + 1, value)
         return result
     }
 
     sub print(^^Value value) {
-        txt.print_f(value.f_value)
+        when value.type {
+            ValueType::NIL    -> txt.print("NIL") 
+            ValueType::BOOL   -> txt.print_bool(peekbool(value as ^^ubyte + offsetof(Value.bytes)))
+            ValueType::NUM    -> txt.print_f(peekf(value as ^^ubyte + offsetof(Value.bytes)))
+            ValueType::STRING -> txt.print(value as ^^ubyte + offsetof(Value.bytes) + 1)
+            ValueType::FUN    -> txt.print("(function)")
+            else -> { txt.print("unrecognized value type ") txt.print_ub(value.type) sys.exit(1) }
+        }
     }
 
     sub free(^^Value value) {
@@ -41,7 +75,7 @@ values {
                                      array.capacity * sizeof(Value))
         }
         ^^Value valptr = array.values + array.count
-        valptr.f_value = value.f_value
+        sys.memcopy(value, valptr, sizeof(Value))
         array.count += 1
     }
 

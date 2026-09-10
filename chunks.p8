@@ -71,7 +71,7 @@ chunks {
     }
    
     sub addConstant(^^Chunk chunk, float value) -> uword {
-        values.writeArray(chunk.constants, values.makeFloat(value))
+        values.writeArray(chunk.constants, values.makeNum(value))
         return chunk.constants.count - 1
     }
 

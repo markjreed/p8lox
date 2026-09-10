@@ -60,6 +60,7 @@ debug {
         when instruction {
             chunks.OpCode::CONSTANT -> return constantInstruction("CONSTANT", chunk, offset)
             chunks.OpCode::CONSTANT2 -> return constant2Instruction("CONSTANT2", chunk, offset)
+            chunks.OpCode::NEGATE -> return simpleInstruction("NEGATE", offset)
             chunks.OpCode::RETURN -> return simpleInstruction("RETURN", offset)
             else -> { 
                 txt.print("unknown opcode ") txt.print_ub(instruction) txt.nl()

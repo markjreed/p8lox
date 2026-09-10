@@ -23,6 +23,7 @@ chunks {
     enum OpCode {
         CONSTANT,
         CONSTANT2,
+        NEGATE,
         RETURN
     }
 

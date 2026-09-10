@@ -13,21 +13,31 @@ values {
 
     ^^Value NIL = ^^Value:[ValueType::NIL, [0, 0, 0, 0, 0]]
 
+    sub bytesPtr(^^Value value) -> ^^ubyte {
+        return value as ^^ubyte + offsetof(Value.bytes)
+    }
+
     sub new() -> ^^Value {
         return mem.alloc(0, 0, sizeof(Value))
+    }
+
+    sub duplicate(^^Value value) -> ^^Value {
+        ^^Value result = new()
+        assign(result, value)
+        return result
     }
 
     sub makeBool(bool value) -> ^^Value {
         ^^Value result = new()
         result.type = ValueType::BOOL
-        pokebool(result as ^^ubyte + offsetof(Value.bytes), value)
+        pokebool(bytesPtr(result), value)
         return result
     }
 
     sub makeNum(float value) -> ^^Value {
         ^^Value result = new()
         result.type = ValueType::NUM
-        pokef(result as ^^ubyte + offsetof(Value.bytes), value)
+        pokef(bytesPtr(result), value)
         return result
     }
 
@@ -35,19 +45,35 @@ values {
         ^^Value result = new()
         result.type = ValueType::STRING
         result.bytes[0] = strings.length(value)
-        pokew(result as ^^ubyte + offsetof(Value.bytes) + 1, value)
+        pokew(bytesPtr(result)+1, value)
         return result
     }
 
     sub print(^^Value value) {
+        ^^ubyte bytes = bytesPtr(value)
         when value.type {
             ValueType::NIL    -> txt.print("NIL") 
-            ValueType::BOOL   -> txt.print_bool(peekbool(value as ^^ubyte + offsetof(Value.bytes)))
-            ValueType::NUM    -> txt.print_f(peekf(value as ^^ubyte + offsetof(Value.bytes)))
-            ValueType::STRING -> txt.print(value as ^^ubyte + offsetof(Value.bytes) + 1)
+            ValueType::BOOL   -> txt.print_bool(peekbool(bytes))
+            ValueType::NUM    -> txt.print_f(peekf(bytes))
+            ValueType::STRING -> txt.print(peekw(bytes))
             ValueType::FUN    -> txt.print("(function)")
             else -> { txt.print("unrecognized value type ") txt.print_ub(value.type) sys.exit(1) }
         }
+    }
+
+    sub negate(^^Value value) -> ^^Value {
+        if value.type != ValueType::BOOL and value.type != ValueType::NUM {
+            return value
+        }
+
+        ^^Value result = duplicate(value)
+        ^^ubyte src = bytesPtr(value)
+        ^^ubyte dest = bytesPtr(result)
+        when value.type {
+            ValueType::BOOL  -> pokebool(dest, not peekbool(src))
+            ValueType::NUM    -> pokef(dest, -peekf(src))
+        }
+        return result
     }
 
     sub free(^^Value value) {

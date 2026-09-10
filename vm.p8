@@ -47,13 +47,13 @@ vm {
     }
 
     sub popValue() -> ^^Value {
-        theVM.stackTop -= 1
+        theVM.stackTop = (theVM.stackTop as ^^ubyte - sizeof(Value)) as ^^Value 
         return theVM.stackTop
     }
 
     sub run() -> ubyte {
         ubyte instruction
-        ^^Value value
+        ^^Value value, other
         repeat {
             if common.DEBUG_TRACE_EXECUTION {
                 txt.chrout(' ')
@@ -69,7 +69,13 @@ vm {
             instruction = @(theVM.ip)
             theVM.ip += 1
             when instruction {
-               chunks.OpCode::RETURN -> return InterpretResult::OK
+               chunks.OpCode::RETURN -> {
+                     value = popValue()
+                     values.print(value)
+                     values.free(value)
+                     txt.nl()
+                     return InterpretResult::OK
+               }
                chunks.OpCode::CONSTANT -> {
                     value = theVM.chunk.constants.values + @(theVM.ip)
                     theVM.ip += 1
@@ -80,6 +86,12 @@ vm {
                     theVM.ip += 2
                     pushValue(value)
                }
+               chunks.OpCode::NEGATE -> {
+                    value = popValue()
+                    other = values.negate(value)
+                    pushValue(other)
+                    values.free(value)
+                }
             }
         }
     }

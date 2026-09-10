@@ -45,6 +45,7 @@ debug {
         ubyte instruction = @(chunk.code + offset)
         when instruction {
             chunks.OpCode::CONSTANT -> return constantInstruction("CONSTANT", chunk, offset)
+            chunks.OpCode::CONSTANT2 -> return constant2Instruction("CONSTANT2", chunk, offset)
             chunks.OpCode::RETURN -> return simpleInstruction("RETURN", offset)
             else -> { 
                 txt.print("unknown opcode ") txt.print_ub(instruction) txt.nl()
@@ -67,5 +68,15 @@ debug {
         values.print(chunk.constants.values + constant)
         txt.nl()
         return offset + 2
+    }
+
+    sub constant2Instruction(str label, ^^Chunk chunk, uword offset) -> uword {
+        uword constant = peekw(chunk.code + offset + 1)
+        print_pad(label, 17)
+        print_uwpad(constant, 3)
+        txt.chrout(' ')
+        values.print(chunk.constants.values + constant)
+        txt.nl()
+        return offset + 3
     }
 }

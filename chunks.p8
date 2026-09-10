@@ -15,6 +15,7 @@ chunks {
 
     enum OpCode {
         CONSTANT,
+        CONSTANT2,
         RETURN
     }
 
@@ -39,18 +40,10 @@ chunks {
         chunk.count += 1
     }
    
-    sub addConstant(^^Chunk chunk, float value) -> ubyte {
+    sub addConstant(^^Chunk chunk, float value) -> uword {
         values.writeArray(chunk.constants, values.makeFloat(value))
-        uword constant = chunk.constants.count - 1
-        txt.print("constant = ")
-        txt.print_uw(constant)
-        if constant > 255 {
-            txt.print("too many constants")
-            sys.exit(1)
-        }
-        return lsb(constant)
+        return chunk.constants.count - 1
     }
-
 
     sub free(^^Chunk chunk) {
         values.freeArray(chunk.constants)

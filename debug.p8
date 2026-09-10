@@ -10,7 +10,7 @@ debug {
     sub disassembleChunk(^^Chunk chunk, ^^ubyte name) {
         txt.print("== ") txt.print(name) txt.print(" ==\n")
         uword offset = 0
-        while offset < chunk.count {
+        while offset < chunk.code_count {
             offset = disassembleInstruction(chunk, offset)
         }
     }
@@ -32,14 +32,26 @@ debug {
             actual += 1
         }
     }
+    uword last_line = 0
 
     sub disassembleInstruction(^^Chunk chunk, uword offset) -> uword {
         print_uwpad(offset, 4)
         txt.chrout(' ')
-        if offset > 0 and peekw(chunk.lines+offset) == peekw(chunk.lines+offset - 1) {
+        ubyte line_index = 0
+        ^^chunks.Line line = chunk.lines + line_index
+        while line.offset <= offset {
+            line_index += 1
+            line = chunk.lines + line_index
+        }
+        if line_index > 0 {
+            line_index -= 1
+        }
+        line = chunk.lines + line_index
+        if line.number == last_line {
             txt.print(" |  ")
         } else {
-            print_uwpad(peekw(chunk.lines+offset), 4)
+            print_uwpad(line.number, 4)
+            last_line = line.number
         }
         txt.chrout(' ')
         ubyte instruction = @(chunk.code + offset)

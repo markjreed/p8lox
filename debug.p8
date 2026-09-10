@@ -38,8 +38,10 @@ debug {
         print_uwpad(offset, 4)
         txt.chrout(' ')
         ubyte line_index = 0
+        uword line_offset = 0
         ^^chunks.Line line = chunk.lines + line_index
-        while line.offset <= offset {
+        while line_index < chunk.line_count and line_offset <= offset {
+            line_offset += line.count
             line_index += 1
             line = chunk.lines + line_index
         }

@@ -13,7 +13,7 @@ main {
         chunks.write(chunk, chunks.OpCode::CONSTANT2, 123)
         chunks.write(chunk, lsb(constant), 123)
         chunks.write(chunk, msb(constant), 123)
-        chunks.write(chunk, chunks.OpCode::RETURN, 123)
+        chunks.write(chunk, chunks.OpCode::RETURN, 125)
 
         debug.disassembleChunk(chunk,"test chunk")
         chunks.free(chunk)

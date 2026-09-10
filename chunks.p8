@@ -53,7 +53,6 @@ chunks {
             need_line = last.number != line
         }
         if need_line {
-            txt.print("adding line number ") txt.print_uw(line) txt.nl()
             if chunk.line_capacity < chunk.line_count + 1 {
                 uword old_line_capacity = chunk.line_capacity
                 chunk.line_capacity = mem.grow(old_line_capacity)

@@ -24,6 +24,10 @@ chunks {
         CONSTANT,
         CONSTANT2,
         NEGATE,
+        ADD,
+        SUBTRACT,
+        MULTIPLY,
+        DIVIDE,
         RETURN
     }
 

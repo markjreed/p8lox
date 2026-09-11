@@ -6,6 +6,16 @@ values {
         NIL, BOOL, NUM, STRING, FUN
     }
 
+    sub typeName(ubyte type) -> str {
+        when type {
+           ValueType::NIL ->  return "nil"
+           ValueType::BOOL ->  return "bool"
+           ValueType::NUM ->  return "num"
+           ValueType::STRING ->  return "string"
+           ValueType::FUN ->  return "function"
+        }
+    }
+
     struct Value {
         ubyte type
         ubyte[5] bytes
@@ -73,6 +83,49 @@ values {
             ValueType::BOOL  -> pokebool(dest, not peekbool(src))
             ValueType::NUM    -> pokef(dest, -peekf(src))
         }
+        return result
+    }
+
+    sub add(^^Value value1, ^^Value value2) -> ^^Value {
+        if value1.type != value2.type {
+            txt.print("mismatched types for addition: ")
+            txt.print(typeName(value1.type)) txt.print(" and ")
+            txt.print(typeName(value2.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        if value1.type != ValueType::BOOL and value1.type != ValueType::NUM {
+            txt.print("unsupported type for addition: ")
+            txt.print(typeName(value1.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        ^^Value result = duplicate(value1)
+        ^^ubyte src = bytesPtr(value2)
+        ^^ubyte dest = bytesPtr(result)
+        when value1.type {
+            ValueType::BOOL  -> pokebool(dest, peekbool(src) or peekbool(dest))
+            ValueType::NUM   -> pokef(dest, peekf(src) + peekf(dest))
+        }
+        return result
+    }
+
+    sub subtract(^^Value value1, ^^Value value2) -> ^^Value {
+        if value1.type != value2.type {
+            txt.print("mismatched types for subtraction: ")
+            txt.print(typeName(value1.type)) txt.print(" and ")
+            txt.print(typeName(value2.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        if value1.type != ValueType::NUM {
+            txt.print("unsupported type for subtraction: ")
+            txt.print(typeName(value1.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        ^^Value result = negate(value2)
+        return add(value1, result)
         return result
     }
 

@@ -92,6 +92,20 @@ vm {
                     pushValue(other)
                     values.free(value)
                 }
+               chunks.OpCode::ADD -> {
+                    value = popValue()
+                    other = popValue()
+                    pushValue(values.add(value, other))
+                    values.free(value)
+                    values.free(other)
+                }
+               chunks.OpCode::SUBTRACT -> {
+                    other = popValue()
+                    value = popValue()
+                    pushValue(values.subtract(value, other))
+                    values.free(value)
+                    values.free(other)
+                }
             }
         }
     }

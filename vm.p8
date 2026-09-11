@@ -106,6 +106,20 @@ vm {
                     values.free(value)
                     values.free(other)
                 }
+               chunks.OpCode::MULTIPLY -> {
+                    value = popValue()
+                    other = popValue()
+                    pushValue(values.multiply(value, other))
+                    values.free(value)
+                    values.free(other)
+                }
+               chunks.OpCode::DIVIDE -> {
+                    other = popValue()
+                    value = popValue()
+                    pushValue(values.divide(value, other))
+                    values.free(value)
+                    values.free(other)
+                }
             }
         }
     }

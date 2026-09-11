@@ -22,8 +22,17 @@ main {
         chunks.write(chunk, chunks.OpCode::CONSTANT, 123)
         chunks.write(chunk, lsb(constant), 123)
 
-        chunks.write(chunk, chunks.OpCode::SUBTRACT, 125)
-        chunks.write(chunk, chunks.OpCode::RETURN, 125)
+        chunks.write(chunk, chunks.OpCode::ADD, 123)
+
+        constant = chunks.addConstant(chunk, 5.6)
+        chunks.write(chunk, chunks.OpCode::CONSTANT, 123)
+        chunks.write(chunk, lsb(constant), 123)
+
+        chunks.write(chunk, chunks.OpCode::DIVIDE, 123)
+
+        chunks.write(chunk, chunks.OpCode::NEGATE, 123)
+
+        chunks.write(chunk, chunks.OpCode::RETURN, 123)
 
         debug.disassembleChunk(chunk,"test chunk")
         void vm.interpret(chunk)

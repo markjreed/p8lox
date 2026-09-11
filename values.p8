@@ -129,6 +129,51 @@ values {
         return result
     }
 
+    sub multiply(^^Value value1, ^^Value value2) -> ^^Value {
+        if value1.type != value2.type {
+            txt.print("mismatched types for multiplication: ")
+            txt.print(typeName(value1.type)) txt.print(" and ")
+            txt.print(typeName(value2.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        if value1.type != ValueType::BOOL and value1.type != ValueType::NUM {
+            txt.print("unsupported type for multiplication: ")
+            txt.print(typeName(value1.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        ^^Value result = duplicate(value1)
+        ^^ubyte src = bytesPtr(value2)
+        ^^ubyte dest = bytesPtr(result)
+        when value1.type {
+            ValueType::BOOL  -> pokebool(dest, peekbool(src) and peekbool(dest))
+            ValueType::NUM   -> pokef(dest, peekf(src) * peekf(dest))
+        }
+        return result
+    }
+
+    sub divide(^^Value value1, ^^Value value2) -> ^^Value {
+        if value1.type != value2.type {
+            txt.print("mismatched types for division: ")
+            txt.print(typeName(value1.type)) txt.print(" and ")
+            txt.print(typeName(value2.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        if value1.type != ValueType::NUM {
+            txt.print("unsupported type for multiplication: ")
+            txt.print(typeName(value1.type)) txt.nl()
+            sys.exit(1)
+        }
+
+        ^^Value result = duplicate(value1)
+        ^^ubyte src = bytesPtr(value2)
+        ^^ubyte dest = bytesPtr(result)
+        pokef(dest, peekf(dest) / peekf(src))
+        return result
+    }
+
     sub free(^^Value value) {
         void mem.alloc(value, sizeof(Value), 0)
     }

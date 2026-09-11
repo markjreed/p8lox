@@ -63,6 +63,8 @@ debug {
             chunks.OpCode::NEGATE -> return simpleInstruction("NEGATE", offset)
             chunks.OpCode::ADD -> return simpleInstruction("ADD", offset)
             chunks.OpCode::SUBTRACT -> return simpleInstruction("SUBTRACT", offset)
+            chunks.OpCode::MULTIPLY -> return simpleInstruction("MULTIPLY", offset)
+            chunks.OpCode::DIVIDE -> return simpleInstruction("DIVIDE", offset)
             chunks.OpCode::RETURN -> return simpleInstruction("RETURN", offset)
             else -> { 
                 txt.print("unknown opcode ") txt.print_ub(instruction) txt.nl()

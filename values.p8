@@ -28,7 +28,7 @@ values {
     }
 
     sub new() -> ^^Value {
-        return mem.alloc(0, 0, sizeof(Value))
+        return mem.realloc(0, 0, sizeof(Value))
     }
 
     sub duplicate(^^Value value) -> ^^Value {
@@ -175,7 +175,7 @@ values {
     }
 
     sub free(^^Value value) {
-        void mem.alloc(value, sizeof(Value), 0)
+        void mem.realloc(value, sizeof(Value), 0)
     }
 
     struct ValueArray {
@@ -199,7 +199,7 @@ values {
         if array.capacity < array.count + 1 {
             uword old_capacity = array.capacity
             array.capacity = mem.grow(old_capacity)
-            array.values = mem.alloc(array.values, 
+            array.values = mem.realloc(array.values, 
                                      old_capacity * sizeof(Value), 
                                      array.capacity * sizeof(Value))
         }
@@ -209,7 +209,7 @@ values {
     }
 
     sub freeArray(^^ValueArray array) {
-        void mem.alloc(array.values, array.capacity * sizeof(Value), 0)
+        void mem.realloc(array.values, array.capacity * sizeof(Value), 0)
         initArray(array)
     }
 }

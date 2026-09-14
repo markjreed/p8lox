@@ -38,7 +38,7 @@ chunks {
         chunk.line_count = 0
         chunk.line_capacity = 0
         chunk.lines = 0
-        chunk.constants = mem.alloc(0, 0, sizeof(ValueArray))
+        chunk.constants = mem.realloc(0, 0, sizeof(ValueArray))
         values.initArray(chunk.constants)
     }
 
@@ -46,7 +46,7 @@ chunks {
         if chunk.code_capacity < chunk.code_count + 1 {
             uword old_code_capacity = chunk.code_capacity
             chunk.code_capacity = mem.grow(old_code_capacity)
-            chunk.code = mem.alloc(chunk.code, old_code_capacity, chunk.code_capacity)
+            chunk.code = mem.realloc(chunk.code, old_code_capacity, chunk.code_capacity)
         }
         @(chunk.code + chunk.code_count) = value
         bool need_line = false
@@ -61,7 +61,7 @@ chunks {
             if chunk.line_capacity < chunk.line_count + 1 {
                 uword old_line_capacity = chunk.line_capacity
                 chunk.line_capacity = mem.grow(old_line_capacity)
-                chunk.lines = mem.alloc(chunk.lines, 
+                chunk.lines = mem.realloc(chunk.lines, 
                                         old_line_capacity * sizeof(Line),
                                         chunk.line_capacity * sizeof(Line))
             }
@@ -82,8 +82,8 @@ chunks {
 
     sub free(^^Chunk chunk) {
         values.freeArray(chunk.constants)
-        void mem.alloc(chunk.code, chunk.code_capacity, 0)
-        void mem.alloc(chunk.lines, chunk.code_capacity * 2, 0)
+        void mem.realloc(chunk.code, chunk.code_capacity, 0)
+        void mem.realloc(chunk.lines, chunk.code_capacity * 2, 0)
         init(chunk)
     }
 

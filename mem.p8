@@ -4,7 +4,7 @@
 mem {
     bool initialized = false
 
-    sub alloc(uword old_ptr, uword old_size, uword new_size) -> uword {
+    sub realloc(uword old_ptr, uword old_size, uword new_size) -> uword {
 
         if not initialized {
             initialized = palloc.init_loram()
@@ -37,6 +37,14 @@ mem {
             sys.exit(1)
         }
         return new_ptr
+    }
+
+    sub alloc(uword size) -> uword {
+        return realloc(0, 0, size)
+    }
+
+    sub free(uword ptr) {
+        void realloc(ptr, 0, 0) 
     }
 
     sub grow(uword old_size) -> uword {

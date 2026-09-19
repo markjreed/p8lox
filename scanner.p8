@@ -38,6 +38,10 @@ scanner {
         theScanner.line = 1
     }
 
+    sub isAlpha(ubyte c) -> bool {
+        return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_'
+    }
+
     sub isDigit(ubyte c) -> bool {
         return c >= '0' and c <= '9'
     }
@@ -107,6 +111,61 @@ scanner {
         }
     }
 
+    sub checkKeyword(uword start, uword length, str rest, ubyte type) -> ubyte  {
+        uword curr = theScanner.current as uword
+        uword sstart = theScanner.start as uword 
+        uword send = curr - sstart
+        uword end = start + length
+        if send == end and sys.memcmp(sstart + start, rest, length) == 0 {
+            return type
+        }
+        return TokenType::IDENTIFIER
+    }
+
+    sub identifierType() -> ubyte {
+        uword size
+        when theScanner.start^^ {
+            'a' -> return checkKeyword(1, 2, "nd", TokenType::AND)
+            'c' -> return checkKeyword(1, 4, "lass", TokenType::CLASS)
+            'e' -> return checkKeyword(1, 3, "lse", TokenType::ELSE)
+            'f' -> {
+                size = (theScanner.current as uword) - (theScanner.start as uword)
+                if size > 1 {
+                    when theScanner.start[1] {
+                        'a' -> return checkKeyword(2,3,"lse",TokenType::FALSE)
+                        'o' -> return checkKeyword(2,1,"r",TokenType::FOR)
+                        'u' -> return checkKeyword(2,1,"n",TokenType::FUN)
+                    }
+                }
+                return TokenType::IDENTIFIER
+            }
+            'i' -> return checkKeyword(1, 1, "f", TokenType::IF)
+            'n' -> return checkKeyword(1, 2, "il", TokenType::NIL)
+            'o' -> return checkKeyword(1, 1, "r", TokenType::OR)
+            'p' -> return checkKeyword(1, 4, "rint", TokenType::PRINT)
+            'r' -> return checkKeyword(1, 5, "eturn", TokenType::RETURN)
+            's' -> return checkKeyword(1, 4, "uper", TokenType::SUPER)
+            't' -> {
+                size = (theScanner.current as uword) - (theScanner.start as uword)
+                if size > 1 {
+                    when theScanner.start[1] {
+                        'h' -> return checkKeyword(2,2,"is",TokenType::THIS)
+                        'r' -> return checkKeyword(2,2,"ue",TokenType::TRUE)
+                    }
+                }
+                return TokenType::IDENTIFIER
+            }
+            'v' -> return checkKeyword(1, 2, "ar", TokenType::VAR)
+            'w' -> return checkKeyword(1, 4, "hile", TokenType::WHILE)
+        }
+        return TokenType::IDENTIFIER
+    }
+        
+    sub identifier() -> ^^Token {
+        while isAlpha(peekCurr()) or isDigit(peekCurr()) void advance()
+        return makeToken(identifierType())
+    }
+
     sub string() -> ^^Token {
         while peekCurr() != '"' and not isAtEnd() {
             if peekCurr() == '\n' theScanner.line += 1
@@ -132,6 +191,7 @@ scanner {
         if isAtEnd()
             return makeToken(TokenType::EOF)
         ubyte c = advance()
+        if isAlpha(c) return identifier()
         if isDigit(c) return number()
         when c {
             '(' -> return makeToken(TokenType::LEFT_PAREN)

@@ -1,3 +1,4 @@
+%option ignore_unused
 palloc{
     uword @zp startaddr
     uword endaddr

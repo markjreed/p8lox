@@ -1,5 +1,6 @@
 %import mem
 %import values
+%option ignore_unused
 
 chunks {
     alias Value = values.Value

@@ -1,5 +1,7 @@
+%option ignore_unused
 %import chunks
 %import common
+%import compiler
 %import debug
 %import values
 
@@ -35,10 +37,9 @@ vm {
     sub free() {
     }
 
-    sub interpret(^^Chunk chunk) -> ubyte {
-        theVM.chunk = chunk
-        theVM.ip = chunk.code
-        return run()
+    sub interpret(^^ubyte source) -> ubyte {
+        compiler.compile(source)
+        return InterpretResult::OK
     }
 
     sub pushValue(^^Value value) {

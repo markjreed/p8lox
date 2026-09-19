@@ -1,4 +1,5 @@
-%zeropage basicsafe
+%option ignore_unused
+
 %import diskio
 %import mem
 %import strings
@@ -60,7 +61,7 @@ files {
         if size > 0 and diskio.f_open(filename) {
             result = mem.alloc(size + 1)
             txt.print_uwhex(result, true) txt.nl()
-            diskio.f_read_all(result)
+            void diskio.f_read_all(result)
             @(result + size) = 0
             diskio.f_close()
         }

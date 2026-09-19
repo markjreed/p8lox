@@ -1,3 +1,5 @@
+%option ignore_unused
+
 %import palloc
 %import textio
 

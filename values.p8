@@ -1,3 +1,4 @@
+%option ignore_unused
 %import floats
 %import mem
 
@@ -33,7 +34,7 @@ values {
 
     sub duplicate(^^Value value) -> ^^Value {
         ^^Value result = new()
-        assign(result, value)
+        void assign(result, value)
         return result
     }
 
@@ -126,7 +127,6 @@ values {
 
         ^^Value result = negate(value2)
         return add(value1, result)
-        return result
     }
 
     sub multiply(^^Value value1, ^^Value value2) -> ^^Value {

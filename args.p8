@@ -1,6 +1,6 @@
 %import strings
+%option ignore_unused
 %option no_sysinit
-%zeropage basicsafe
 
 args {
     ubyte[256] buffer

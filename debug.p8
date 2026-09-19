@@ -1,4 +1,5 @@
 %encoding iso
+%option ignore_unused
 
 %import chunks
 %import conv
@@ -13,6 +14,15 @@ debug {
         while offset < chunk.code_count {
             offset = disassembleInstruction(chunk, offset)
         }
+    }
+
+    sub print_ubpad(ubyte value, ubyte width) {
+        ubyte actual = strings.length(conv.str_ub(value))
+        while actual < width {
+            txt.chrout('0')
+            actual += 1
+        }
+        txt.print_ub(value)
     }
 
     sub print_uwpad(uword value, ubyte width) {

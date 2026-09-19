@@ -1,4 +1,5 @@
 %zeropage basicsafe
+%option ignore_unused
 
 %import args
 %import files
@@ -23,18 +24,18 @@ main {
             length = txt.input_chars(line) 
             txt.nl()
             if length > 0 {
-                interpret(line)
+                void vm.interpret(line)
             }
         }
     }
 
     sub runFile(str path) {
-        str source = files.slurp(path)
+        ^^ubyte source = files.slurp(path)
         if source == 0 {
             txt.print("could not load '") txt.print(path) txt.print("'\n")
             sys.exit(74)
         }
-        ubyte result = interpret(source)
+        ubyte result = vm.interpret(source)
         mem.free(source)
         if result == InterpretResult::COMPILE_ERROR {
             sys.exit(65)
@@ -59,6 +60,5 @@ main {
         }
 
         vm.free()
-        chunks.free(chunk)
     }
 }

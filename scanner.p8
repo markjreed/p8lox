@@ -1,3 +1,4 @@
+%encoding iso
 %option ignore_unused
 %import strings
 
@@ -41,6 +42,29 @@ scanner {
         return @(theScanner.current) == 0
     }
 
+    sub advance() -> ubyte {
+        ubyte c = theScanner.current^^
+        theScanner.current += 1
+        return c
+    }
+
+    sub peekCurr() -> ubyte {
+        return theScanner.current^^
+    }
+
+    sub peekNext() -> ubyte {
+        if isAtEnd() return 0
+        return theScanner.current[1]
+    }
+
+    sub match(ubyte expected) -> bool {
+        if isAtEnd() return false
+        if theScanner.current^^ != expected 
+            return false
+        theScanner.current += 1
+        return true
+    }
+
     sub makeToken(ubyte type) -> ^^Token {
         ^^Token token = ^^Token:[0,0,0,0]
         token.type = type
@@ -59,12 +83,56 @@ scanner {
         return token
     }
 
+    sub skipWhitespace() {
+        repeat {
+            ubyte c = peekCurr()
+            when c {
+                ' ','\t' -> advance()
+                '\n' -> { theScanner.line += 1 advance() }
+                '/' -> {
+                    if peekNext() == '/' {
+                        while peekCurr() != '\n' and not isAtEnd() {
+                            advance()
+                        }
+                    } else {
+                        return
+                    }
+                }
+                else -> return
+            }
+        }
+    }
+
     sub scanToken() -> ^^Token {
+        skipWhitespace()
         theScanner.start = theScanner.current
         if isAtEnd()
             return makeToken(TokenType::EOF)
-        return errorToken("Unexpected character.")
+        ubyte c = advance()
+        when c {
+            '(' -> return makeToken(TokenType::LEFT_PAREN)
+            ')' -> return makeToken(TokenType::RIGHT_PAREN)
+            '{' -> return makeToken(TokenType::LEFT_BRACE)
+            '}' -> return makeToken(TokenType::RIGHT_BRACE)
+            ';' -> return makeToken(TokenType::SEMICOLON)
+            ',' -> return makeToken(TokenType::COMMA)
+            '.' -> return makeToken(TokenType::DOT)
+            '-' -> return makeToken(TokenType::MINUS)
+            '+' -> return makeToken(TokenType::PLUS)
+            '/' -> return makeToken(TokenType::SLASH)
+            '*' -> return makeToken(TokenType::STAR)
+            '!' -> return makeToken(
+                if match('=') then TokenType::BANG_EQUAL else TokenType::BANG)
+            '=' -> return makeToken(
+                if match('=') then TokenType::EQUAL_EQUAL else TokenType::EQUAL)
+            '<' -> return makeToken(
+                if match('=') then TokenType::LESS_EQUAL else TokenType::LESS)
+            '>' -> return makeToken(
+                if match('=') then TokenType::GREATER_EQUAL else TokenType::GREATER)
+        }
+        str errorMessage = "Unexpected character: 'x'" 
+        errorMessage[23] = c
+        theScanner.current += 1
+        return errorToken(errorMessage)
     }
-
-
 }

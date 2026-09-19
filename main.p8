@@ -1,5 +1,6 @@
-%zeropage basicsafe
+%encoding iso
 %option ignore_unused
+%zeropage basicsafe
 
 %import args
 %import files

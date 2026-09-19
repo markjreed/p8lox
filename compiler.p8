@@ -1,7 +1,9 @@
+%encoding iso
+%option ignore_unused
+
 %import debug
 %import scanner
 %import textio
-%option ignore_unused
 
 compiler {
     alias Token = scanner.Token

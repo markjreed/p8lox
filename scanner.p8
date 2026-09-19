@@ -38,6 +38,10 @@ scanner {
         theScanner.line = 1
     }
 
+    sub isDigit(ubyte c) -> bool {
+        return c >= '0' and c <= '9'
+    }
+
     sub isAtEnd() -> bool {
         return @(theScanner.current) == 0
     }
@@ -87,12 +91,12 @@ scanner {
         repeat {
             ubyte c = peekCurr()
             when c {
-                ' ','\t' -> advance()
-                '\n' -> { theScanner.line += 1 advance() }
+                ' ','\t' -> void advance()
+                '\n' -> { theScanner.line += 1 void advance() }
                 '/' -> {
                     if peekNext() == '/' {
                         while peekCurr() != '\n' and not isAtEnd() {
-                            advance()
+                            void advance()
                         }
                     } else {
                         return
@@ -103,12 +107,32 @@ scanner {
         }
     }
 
+    sub string() -> ^^Token {
+        while peekCurr() != '"' and not isAtEnd() {
+            if peekCurr() == '\n' theScanner.line += 1
+            void advance()
+        }
+        if isAtEnd() return errorToken("Unterminated string.")
+        void advance()
+        return makeToken(TokenType::STRING)
+    }
+
+    sub number() -> ^^Token {
+        while isDigit(peekCurr()) void advance()
+        if peekCurr() == '.' and isDigit(peekNext()) {
+            void advance()
+            while isDigit(peekCurr()) void advance()
+        }
+        return makeToken(TokenType::NUMBER)
+    }
+
     sub scanToken() -> ^^Token {
         skipWhitespace()
         theScanner.start = theScanner.current
         if isAtEnd()
             return makeToken(TokenType::EOF)
         ubyte c = advance()
+        if isDigit(c) return number()
         when c {
             '(' -> return makeToken(TokenType::LEFT_PAREN)
             ')' -> return makeToken(TokenType::RIGHT_PAREN)
@@ -129,6 +153,7 @@ scanner {
                 if match('=') then TokenType::LESS_EQUAL else TokenType::LESS)
             '>' -> return makeToken(
                 if match('=') then TokenType::GREATER_EQUAL else TokenType::GREATER)
+            '"' -> return string()
         }
         str errorMessage = "Unexpected character: 'x'" 
         errorMessage[23] = c

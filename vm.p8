@@ -38,8 +38,17 @@ vm {
     }
 
     sub interpret(^^ubyte source) -> ubyte {
-        compiler.compile(source)
-        return InterpretResult::OK
+        ^^Chunk chunk = ^^Chunk:[]
+        chunks.init(chunk)
+        if not compiler.compile(source, chunk) {
+            chunks.free(chunk)
+            return InterpretResult::COMPILE_ERROR
+        }
+        theVM.chunk = chunk
+        theVM.ip = chunk.code
+        ubyte result = run()
+        chunks.free(chunk)
+        return result
     }
 
     sub pushValue(^^Value value) {

@@ -1,5 +1,6 @@
 %option ignore_unused
 %import floats
+%import strings
 %import mem
 
 values {
@@ -24,7 +25,7 @@ values {
 
     ^^Value NIL = ^^Value:[ValueType::NIL, [0, 0, 0, 0, 0]]
 
-    sub bytesPtr(^^Value value) -> ^^ubyte {
+    inline sub bytesPtr(^^Value value) -> ^^ubyte {
         return value as ^^ubyte + offsetof(Value.bytes)
     }
 
@@ -45,11 +46,19 @@ values {
         return result
     }
 
+    inline sub boolVal(^^Value value) -> bool {
+        return peekbool(bytesPtr(value))
+    }
+
     sub makeNum(float value) -> ^^Value {
         ^^Value result = new()
         result.type = ValueType::NUM
         pokef(bytesPtr(result), value)
         return result
+    }
+
+    inline sub numVal(^^Value value) -> float {
+        return peekf(bytesPtr(value) as uword)
     }
 
     sub makeString(str value) -> ^^Value {
@@ -58,6 +67,10 @@ values {
         result.bytes[0] = strings.length(value)
         pokew(bytesPtr(result)+1, value)
         return result
+    }
+
+    inline sub stringVal(^^Value value) -> str {
+        return peekw(bytesPtr(value) + 1)
     }
 
     sub print(^^Value value) {

@@ -44,9 +44,12 @@ vm {
             chunks.free(chunk)
             return InterpretResult::COMPILE_ERROR
         }
+
         theVM.chunk = chunk
         theVM.ip = chunk.code
+
         ubyte result = run()
+
         chunks.free(chunk)
         return result
     }
